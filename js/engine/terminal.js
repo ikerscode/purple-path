@@ -52,6 +52,9 @@ export function touchesOutOfScope(level, line) {
     for (const t of toks) {
       if (t === host) return true;
       if (t.includes("/") && IPV4.test(host) && cidrContains(t, host)) return true;
+      // A URL names its host between "://" and the next "/" (an optional :port is ignored).
+      const url = /^[a-z][a-z0-9+.-]*:\/\/([^/]+)/.exec(t);
+      if (url && url[1].replace(/:\d+$/, "") === host) return true;
     }
   }
   return false;
@@ -202,7 +205,7 @@ export function runCommand(level, term, line) {
   }
 
   for (const c of level.commands || []) {
-    if (new RegExp(c.match, "i").test(text)) {
+    if (new RegExp(c.match, c.caseSensitive ? "" : "i").test(text)) {
       result.output = c.output;
       if (c.event) result.events.push(c.event);
       return result;
