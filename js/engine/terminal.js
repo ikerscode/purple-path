@@ -186,6 +186,11 @@ export function runCommand(level, term, line) {
         result.output = "[simulation] cat needs a file name here (real cat would wait to read standard input).";
         return result;
       }
+      if (args.some((a) => a.startsWith("-"))) {
+        result.handled = false;
+        result.output = UNMODELLED;
+        return result;
+      }
       const lines = [];
       for (const a of args) {
         const path = resolvePath(term.cwd, a);

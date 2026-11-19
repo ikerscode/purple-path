@@ -4,5 +4,11 @@ import ports from "./03-ports.js";
 import hashing from "./04-hashing.js";
 import phishing from "./05-phishing.js";
 import enumeration from "./06-enumeration.js";
+import sqli from "./07-sqli.js";
+import xss from "./08-xss.js";
+import privesc from "./09-privesc.js";
+import lateral from "./10-lateral.js";
 
-export default [scope, recon, ports, hashing, phishing, enumeration].sort((a, b) => a.order - b.order);
+export default [scope, recon, ports, hashing, phishing, enumeration, sqli, xss, privesc, lateral].sort(
+  (a, b) => a.order - b.order,
+);

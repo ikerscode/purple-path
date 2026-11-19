@@ -28,3 +28,13 @@ test("cd: a file is 'Not a directory', a missing path is 'No such file'", () => 
   assert.equal(run("pwd").output, level.world.cwd, "cwd unchanged after failed cd");
   assert.equal(run("cd nowhere").output, "bash: cd: nowhere: No such file or directory");
 });
+
+test("cat: any option is not modelled rather than treated as a file name", () => {
+  const run = fresh();
+  for (const l of ["cat -n README.txt", "cat -", "cat --help"]) {
+    const r = run(l);
+    assert.equal(r.handled, false, l);
+    assert.match(r.output, /not modelled/, l);
+    assert.deepEqual(r.events, [], l);
+  }
+});
