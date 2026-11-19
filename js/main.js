@@ -75,7 +75,7 @@ function showChallenge(i) {
         el("div", { class: "actions" }, el("button", { type: "button", class: "primary", text: "Restart this level", onclick: () => showChallenge(i) }), el("button", { type: "button", text: "Level select", onclick: showSelect }))
       );
       banner.querySelector("button").focus();
-      live.say("Engagement terminated. You touched an out-of-scope host.");
+      live.say("Engagement terminated. That command named an out-of-scope host.");
     } else {
       reveal();
     }

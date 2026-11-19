@@ -1,5 +1,4 @@
-// Level 4 is checked here directly because it is not yet registered in levels/index.js.
-// The generic checks mirror the ones in levels.test.js; the rest cover level 4's own data.
+// Extra checks for level 4 (password storage). The generic suite also runs for it from levels.test.js.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import level from "../levels/04-hashing.js";

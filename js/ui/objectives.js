@@ -5,13 +5,14 @@ import { submitObjective } from "../engine/checks.js";
 // choice objectives show their own controls (answers also work in the terminal).
 export function createObjectivesView(level, session, say, onProgress = () => {}) {
   const list = el("ol", { class: "objectives" });
-  const root = el("section", { class: "panel objectives-panel", "aria-label": "Objectives" }, el("h2", { text: "Objectives" }), list);
+  const heading = el("h2", { text: "Objectives", tabindex: "-1" });
+  const root = el("section", { class: "panel objectives-panel", "aria-label": "Objectives" }, heading, list);
   const notes = new Map();
 
   function controlFor(o) {
     const note = el("p", { class: "status", role: "status" });
     notes.set(o.id, note);
-    const done = () => { render(); say(`Objective complete: ${o.prompt}`); onProgress(); };
+    const done = () => { render(); heading.focus(); say(`Objective complete: ${o.prompt}`); onProgress(); };
     if (o.check.type === "answer") {
       const id = nextId("ans");
       const input = el("input", { id, class: "text-field", type: "text", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "aria-label": "Your answer" });

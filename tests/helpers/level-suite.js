@@ -32,8 +32,7 @@ function checkShape(check, where) {
 }
 
 // The generic per-level checks (schema, sources, solvability, out-of-scope behaviour).
-// Used by levels.test.js for registered levels and by pending-levels.test.js for
-// levels that are not registered in levels/index.js yet.
+// levels.test.js runs them for every level registered in levels/index.js.
 export function defineLevelTests(level) {
   test(`${level.id}: schema`, () => {
     noFunctions(level, level.id);

@@ -38,3 +38,15 @@ test("cat: any option is not modelled rather than treated as a file name", () =>
     assert.deepEqual(r.events, [], l);
   }
 });
+
+test("cd, ls and whoami with extra operands, and ~ expansion, behave like bash or say not modelled", () => {
+  const run = fresh();
+  assert.equal(run("cd engagement extra").output, "bash: cd: too many arguments");
+  assert.equal(run("pwd").output, level.world.cwd);
+  assert.match(run("ls engagement README.txt").output, /not modelled/);
+  assert.match(run("whoami someone").output, /not modelled/);
+  run("cd ~/engagement");
+  assert.equal(run("pwd").output, `${level.world.cwd}/engagement`);
+  run("cd ~");
+  assert.equal(run("pwd").output, level.world.cwd);
+});

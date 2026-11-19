@@ -114,8 +114,11 @@ export function runCommand(level, term, line) {
     return result;
   }
 
-  const [cmd, ...args] = text.split(" ");
+  const [cmd, ...rawArgs] = text.split(" ");
   const name = cmd.toLowerCase();
+  // bash expands a leading ~ before the command runs; home is the level's starting directory.
+  const home = world.cwd || "/";
+  const args = rawArgs.map((a) => (a === "~" ? home : a.startsWith("~/") ? home + a.slice(1) : a));
 
   switch (name) {
     case "help":
@@ -148,6 +151,11 @@ export function runCommand(level, term, line) {
       result.clear = true;
       return result;
     case "whoami":
+      if (args.length) {
+        result.handled = false;
+        result.output = UNMODELLED;
+        return result;
+      }
       result.output = term.user;
       return result;
     case "pwd":
@@ -163,7 +171,13 @@ export function runCommand(level, term, line) {
       // GNU ls: the last of -a / -A given wins.
       const lastDotFlag = flags.flatMap((f) => f.slice(1).split("")).filter((c) => c === "a" || c === "A").pop();
       const showDots = lastDotFlag === "a";
-      const target = args.filter((a) => !a.startsWith("-"))[0];
+      const targets = args.filter((a) => !a.startsWith("-"));
+      if (targets.length > 1) {
+        result.handled = false;
+        result.output = UNMODELLED;
+        return result;
+      }
+      const target = targets[0];
       const dir = target ? resolvePath(term.cwd, target) : term.cwd;
       if (Object.prototype.hasOwnProperty.call(files, dir)) {
         result.output = target;
@@ -175,6 +189,10 @@ export function runCommand(level, term, line) {
       return result;
     }
     case "cd": {
+      if (args.length > 1) {
+        result.output = "bash: cd: too many arguments";
+        return result;
+      }
       const dir = args[0] ? resolvePath(term.cwd, args[0]) : (world.cwd || "/");
       if (isDir(files, dir) || dir === "/") term.cwd = dir;
       else if (Object.prototype.hasOwnProperty.call(files, dir)) result.output = `bash: cd: ${args[0]}: Not a directory`;
